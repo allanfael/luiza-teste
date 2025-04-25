@@ -4,7 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import { Typography } from '@/components/Typography'
-import { SafeAreaView } from 'react-native'
+import { Pressable, SafeAreaView } from 'react-native'
 import { useAuthentication } from './view-model'
 import { Image } from 'expo-image'
 
@@ -12,7 +12,7 @@ import logo from '@/assets/logo.png'
 import { styles } from './styles'
 
 export const Authentication = () => {
-  const { form, onSubmit } = useAuthentication()
+  const { form, onSubmit, register } = useAuthentication()
 
   const {
     formState: { errors, isSubmitting },
@@ -80,6 +80,14 @@ export const Authentication = () => {
           loading={isSubmitting}
           testID="login-button"
         />
+        <Pressable onPress={register}>
+          <Typography 
+            variant="normalBold" 
+            color="info" 
+            style={styles.link}>
+            Criar conta
+          </Typography>
+        </Pressable>
       </KeyboardAwareScrollView>
     </SafeAreaView>
   )

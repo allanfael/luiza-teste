@@ -1,18 +1,20 @@
-import { useForm, UseFormReturn } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-// import { post } from '@/services/api'
-// import ResponseError from '@services/api/ResponseError'
-// import { userStore } from '@store/user'
+import { FirebaseError } from 'firebase/app'
 
 import { authenticationFormSchema, AuthenticationFormType } from './schemas'
+import { firebaseServices } from '@/services/firebase'
+import { userInvalid } from '@/utils/firebaseErrors'
+import { useNavigation } from '@react-navigation/native'
+import { ROUTES } from '@/utils/routes'
+import { AuthenticationModel } from './model'
+import { useUserStore } from '@/store/user'
 
-interface Props {
-  form: UseFormReturn<AuthenticationFormType, any, any>
-  onSubmit: (data: AuthenticationFormType) => Promise<void>
-}
 
-export const useAuthentication = (): Props => {
-  // const { save } = userStore()
+export const useAuthentication = (): AuthenticationModel => {
+  const { save } = useUserStore()
+
+  const { navigate } = useNavigation()
 
   const form = useForm<AuthenticationFormType>({
     resolver: zodResolver(authenticationFormSchema),
@@ -22,26 +24,35 @@ export const useAuthentication = (): Props => {
 
   const onSubmit = async (data: AuthenticationFormType) => {
     try {
-      // const response = await post({
-      //   url: '/api/user/signin',
-      //   data,
-      // })
+      const response = await firebaseServices.authentication(data)
 
-      // const id = response.roles[0]._id
-      // const token = response.token
+      save(response.user.email || '')
 
-      // save(id, token)
+      navigate(ROUTES.LIST_PRODUCTS as never)
     } catch (e) {
-      // if (e instanceof ResponseError) {
-      //   setError('password', {
-      //     message: e.message as string,
-      //   })
-      // }
+      const error = e as FirebaseError
+
+      const message = error.code
+
+      if (userInvalid.includes(message)) {
+        setError('password', {
+          message: 'Usuário ou senha inválido',
+        })
+
+        return
+      }
+
+      setError('email', {
+        message,
+      })
     }
   }
+
+  const register = () => navigate(ROUTES.REGISTER as never)
 
   return {
     form,
     onSubmit,
+    register
   }
 }

@@ -10,6 +10,8 @@ import { Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useBottomSheet } from '@/store/bottom-sheet'
 import { Authentication } from '@/screens/Authentication/view'
+import { Register } from '@/screens/Register/view'
+import { useUserStore } from '@/store/user'
 
 const Stack = createStackNavigator<ParamsRoute>()
 
@@ -17,10 +19,11 @@ export const Stacks = () => {
   const background = useTheme('background')
   const text = useTheme('text')
   const {setShowBottomSheet} = useBottomSheet()
+  const { email } = useUserStore()
 
   return (
     <Stack.Navigator 
-      initialRouteName={ROUTES.AUTHENTICATION}
+      initialRouteName={email ? ROUTES.LIST_PRODUCTS : ROUTES.AUTHENTICATION}
       screenOptions={{
         headerStyle: {
           backgroundColor: background,
@@ -45,7 +48,9 @@ export const Stacks = () => {
           ),
           headerRightContainerStyle: {
             right: 16
-          }
+          },
+          headerLeft: () => <></>,
+          gestureEnabled: false
         }}
       />
       <Stack.Screen
@@ -53,6 +58,14 @@ export const Stacks = () => {
         component={Authentication}
         options={{
           headerShown: false
+        }}
+      />
+      <Stack.Screen
+        name={ROUTES.REGISTER}
+        component={Register}
+        options={{
+          title: '',
+          headerBackTitle: ''
         }}
       />
     </Stack.Navigator>

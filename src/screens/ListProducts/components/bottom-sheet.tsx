@@ -6,10 +6,17 @@ import { StyleSheet, View } from 'react-native';
 import { Switch } from '@/components/Switch';
 import { useSettings } from '@/store/settings';
 import { useTheme } from '@/hooks/useTheme';
+import { Button } from '@/components/Button';
+import { useUserStore } from '@/store/user';
+import { useNavigation } from '@react-navigation/native';
+import { ROUTES } from '@/utils/routes';
 
 export const BottomSheet = () => {
   const { setShowBottomSheet, showBottomSheet } = useBottomSheet()
   const { darkMode, onlyFavorites, setDarkMode, setOnlyFavorites } = useSettings()
+  const { logout } = useUserStore()
+
+  const { reset } = useNavigation()
   
   const backgroundColor = useTheme('secondary')
   const indicatorColor = useTheme('text')
@@ -47,9 +54,17 @@ export const BottomSheet = () => {
     [],
   )
 
+  const handleLogout = () => {
+    logout()
+    reset({
+      index: 0,
+      routes: [{ name: ROUTES.AUTHENTICATION as never }]
+    })
+  }
+
   return (
     <BottomSheetComponent
-      snapPoints={['30%']}
+      snapPoints={['35%']}
       index={showBottomSheet ? 1 : -1}
       enablePanDownToClose
       ref={bottomSheetRef}
@@ -72,6 +87,7 @@ export const BottomSheet = () => {
           text='Somente Favoritos'
           value={onlyFavorites} 
           onChange={setOnlyFavorites}/>
+          <Button title="Sair" onPress={handleLogout} styles={styles.button}/>
         </View>
       </BottomSheetScrollView>
     </BottomSheetComponent>
@@ -89,5 +105,8 @@ const styles = StyleSheet.create({
   switchContainer: {
     gap: 12,
     marginTop: 20
+  },
+  button: {
+    marginTop: 10
   }
 })
