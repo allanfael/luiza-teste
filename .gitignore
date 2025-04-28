@@ -71,6 +71,7 @@ yarn-error.*
 
 # local env files
 .env*.local
+GoogleService-Info.*
 
 # typescript
 *.tsbuildinfo
