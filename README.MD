@@ -16,6 +16,5 @@ App showcase.
 
 ## Firebase
 
-- Este projeto possui integração com firebase authentication
-- Para facilitar os testes e analise deixei o projeto pro pra executar, após o período da avaliação
-as chaves serão excluídas
+- Este projeto possui integração com firebase authentication, então
+precisará colocar na raiz do projeto os arquivos GoogleService
